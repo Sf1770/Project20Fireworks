@@ -17,11 +17,17 @@ class GameScene: SKScene {
     var gameTimer: Timer!
     var fireworks = [SKNode]()
     var scoreLbl: SKLabelNode!
-    var explodeBtn: SKLabelNode!
+    var launchLbl: SKLabelNode!
     
     let leftEdge = -22
     let bottomEdge = -22
     let rightEdge = 1024 + 22
+    
+    var launches = 0 {
+        didSet{
+            launchLbl.text = "Launches: \(launches)"
+        }
+    }
     
     var score = 0 {
         didSet{
@@ -43,8 +49,14 @@ class GameScene: SKScene {
         scoreLbl.position = CGPoint(x: 980, y: 700)
         addChild(scoreLbl)
         
+        launchLbl = SKLabelNode(fontNamed: "Chalkduster")
+        launchLbl.text = "Launches: 0"
+        launchLbl.position = CGPoint(x: 600, y: 700)
+        addChild(launchLbl)
         
+    
         gameTimer = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(launchFireworks), userInfo: nil, repeats: true)
+        
         
         
     }
@@ -102,6 +114,7 @@ class GameScene: SKScene {
             createFirework(xMovement: 0, x: 512 - 100, y: bottomEdge)
             createFirework(xMovement: 0, x: 512 + 100, y: bottomEdge)
             createFirework(xMovement: 0, x: 512 + 200, y: bottomEdge)
+            launches += 1
             
         case 1:
             //fire five, in a fan, straight up
@@ -110,6 +123,7 @@ class GameScene: SKScene {
             createFirework(xMovement: -100, x: 512 - 100, y: bottomEdge)
             createFirework(xMovement: 100, x: 512 + 100, y: bottomEdge)
             createFirework(xMovement: 200, x: 512 + 200, y: bottomEdge)
+            launches += 1
             
         case 2:
             //fire five, from left to the right
@@ -118,7 +132,7 @@ class GameScene: SKScene {
             createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge + 200)
             createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge + 100)
             createFirework(xMovement: movementAmount, x: leftEdge, y: bottomEdge)
-            
+            launches += 1
         case 3:
             //fire five, from the right to the left
             createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 400)
@@ -126,6 +140,7 @@ class GameScene: SKScene {
             createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 200)
             createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge + 100)
             createFirework(xMovement: -movementAmount, x: rightEdge, y: bottomEdge)
+            launches += 1
         default:
             break
         }
@@ -259,6 +274,11 @@ class GameScene: SKScene {
                 fireworks.remove(at: index)
                 firework.removeFromParent()
             }
+        }
+        if launches >= 25{
+            //stops launching
+            gameTimer.invalidate()
+            
         }
     }
 }
